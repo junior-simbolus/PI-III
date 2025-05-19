@@ -4,14 +4,18 @@ from flask_cors import CORS
 from flask_session import Session
 import fdb
 from fdb import Error
+import uuid
 
 app = Flask(__name__)
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+app.config["SECRET_KEY"] = ""
 Session(app)
 CORS(app)
 url_send = "https://app.whatsgw.com.br/api/WhatsGw/Send"
 user_db = "sysdba"
 password_db = "masterkey"
-name_db = "192.168.2.5:C:\\Simbolus\\Banco\\bSimbolus_Gestor.fdb"
+name_db = "simbolussi.ddns.com.br/3050:C:\\Simbolus\\Banco\\bSimbolus_Gestor.fdb"
 
 header = {
     "Content-Type": "application/json"
@@ -49,7 +53,8 @@ def exec_query(connection, query):
 
 @app.route('/')
 def index():
-    return render_template("index_services.html")
+    return render_template("login.html")
+#    return render_template("index_services.html")
 
 @app.route('/enviaTexto/<apikey>/<conta>/<Fone>/<id>/<Texto>', methods=["POST"])
 def enviaTexto(apikey, conta, Fone, ID, Texto):
@@ -82,20 +87,38 @@ def enviaArquivo(apikey, conta, Fone, ID, Texto, nome_arquivo, encoded, tipo, ti
     response = requests.post(url_send, headers=header, json=dataImagem)
     return response.status_code, response.json()
 
-@app.route('/login', methods=["POST", "GET"])
-def login():
+@app.route('/documentacao/<tipo>', methods=["POST", "GET"])
+def documentacao(tipo):
+   if tipo == '1':
+      return render_template("index_services.html")
+   else:
+     return jsonify('index_services.html')
+
+@app.route('/valida/<tipo>', methods=["POST", "GET"])
+def valida(tipo):
    try:
-     dados = request.get_json()
-     cnpj = dados['username']
-     senha = dados['password']
+     if tipo == '0':
+       dados = request.get_json()
+       cnpj = dados['user']
+       senha = dados['pass']
+     else:
+       cnpj = request.form.get('user')
+       senha = request.form.get('pass')
+
      conexao = create_db_connection(user_db, password_db, name_db)
      sql = "select cli_senha_web, cli_razao, cli_codigo from clientes where cli_status = 0 and cli_cnpj = '"+cnpj+"'"
      cursor, msg = read_query(conexao, sql)
      conexao.close()
      if cursor:
         if cursor[0][0] != senha:
-           retorno = {"mensagem": "usuário ou senha inválido", "code": 400}
+           if tipo == '1':
+              flash("Usuário ou senha inválido!")
+              retorno = {"mensagem": "Usuário ou senha inválido", "code": 400}
+              return render_template("login.html", retorno=retorno)
+           else:
+              retorno = {"mensagem": "usuário ou senha inválido", "code": 400}
         else:
+           print('ok')
            session["cnpj"] = cnpj
            session["idcli"] = cursor[0][2]
            session["nome_cliente"] = cursor[0][1]
@@ -106,11 +129,26 @@ def login():
                       "cnpj": cnpj,
                       "code": 200,
                       "token": session.get("uid")}
+           if tipo == '1':
+              return render_template("servicos.html", nome_cliente=cursor[0][1], idCli=cursor[0][2], Mensagem=None,
+                                  sessao=session.get("uid"), retorno=retorno)
      else:
+        print('teste')
         retorno = {"mensagem": "cnpj inválido!", "code": 400}
+        if tipo == '1':
+          flash("CNPJ ou senha inválido!")
+          return render_template("login.html", retorno=retorno)
    except Error as err:
      retorno = {"mensagem": err, "code": 400}
    return jsonify(retorno)
 
+@app.route("/logoff/<sessao>")
+def logoff(sessao):
+    session["idCli"] = None
+    session["cnpj"] = None
+    session["nome_cliente"] = None
+    session["uid"] = None
+    return redirect("/")
 
 app.run(host='192.168.2.190')
+#  serve(app, host="192.168.2.190", port=5000)
