@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servidor de envio de Mensagens WhatsApp Simbolus</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/login.css')}}">
+</head>
+<body>
+    {% set mensagens = get_flashed_messages() %}
+    {% if mensagens %}
+      <script>
+
+      </script>
+        <div>
+            <ul align="center">
+            {% for msg in mensagens %}
+                {{msg}}
+            {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    <img src="/static/images/Logo.png" alt=""/><br>
+        <div class="page">
+            <form  class="formLogin" action="/login2" method="post">
+                <fieldset>
+                    <legend>Serviços</legend>
+                    <label style="bold">método: enviaTexto<br>
+                        parâmetros<br>
+                        apikey: Chave api do cliente<br>
+                        conta: Celular com ddd do cliente<br>
+                        Fone: Telefone para envio da mensagem<br>
+                        id: Identificador do cliente para identificar mensagem<br>
+                        Texto: Texto que será enviado<br><br>
+                    método: enviaArquivo<br>
+                        parâmetros<br>
+                        apikey: Chave api do cliente<br>
+                        conta: Celular com ddd do cliente<br>
+                        Fone: Telefone para envio da mensagem<br>
+                        id: Identificador do cliente para identificar mensagem<br>
+                        Texto: Texto que será enviado<br>
+                        nome_arquivo: nome do arquivo que será enviado<br>
+                        encoded: arquivo na base64<br>
+                        tipo: "image/jpeg" ou "documento/pdf" ou "documento/xml"<br>
+                        tipo2: image ou document<br>
+                    </label>
+                </fieldset>
+        </form>
+    </div>
+
+</body>
+</html>
