@@ -10,7 +10,7 @@ import requests
 user_db = "SYSDBA"
 password_db = "masterkey"
 #name_db = "SERVIDOR/3050:C:\\SISTEMA\\MOREIRA.gdb"
-name_db = "127.0.0.1/3070:C:\\BANCOS\\NUTRI\\IBITINGA.FDB"
+name_db = "127.0.0.1/3070:C:\\BANCOS\\NUTRI\\MATTAR.FDB"
 url_send = "192.168.2.190:5000"
 
 locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
@@ -77,8 +77,10 @@ def verificarEnviar():
            Arquivo1 = row[3]
            Arquivo2 = row[4]
            Mensagem = row[5]
-           apikey = row[6]
-           conta = row[7]
+           #apikey = row[6]
+           apikey = '5a244df2-b3d0-4cbd-acd8-53346574db77'
+           #conta = row[7]
+           conta = '5514997792223'
            empresa = row[8]
 
            if "jpg" in Arquivo1:
