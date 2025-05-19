@@ -77,8 +77,8 @@ def verificarEnviar():
            Arquivo1 = row[3]
            Arquivo2 = row[4]
            Mensagem = row[5]
-           apikey = row[6]#"2b3d4fe5-c41d-4a5c-aae3-31ec5d7b0eff"
-           conta = row[7]#"551436522211"
+           apikey = row[6]
+           conta = row[7]
            empresa = row[8]
 
            if "jpg" in Arquivo1:
