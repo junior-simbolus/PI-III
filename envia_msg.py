@@ -2,14 +2,21 @@ import requests
 from flask import Flask, jsonify, request, render_template, session, redirect, flash
 from flask_cors import CORS
 from flask_session import Session
-import fdb
+from werkzeug.utils import secure_filename
 from fdb import Error
 import uuid
+import funcoes
+import os
 
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 app.config["SECRET_KEY"] = ""
+UPLOAD_FOLDER = 'uploads'
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 Session(app)
 CORS(app)
 url_send = "https://app.whatsgw.com.br/api/WhatsGw/Send"
@@ -20,36 +27,6 @@ name_db = "simbolussi.ddns.com.br/3050:C:\\Simbolus\\Banco\\bSimbolus_Gestor.fdb
 header = {
     "Content-Type": "application/json"
 }
-
-def create_db_connection(user_name, user_password, db_name):
-   connection = None
-   try:
-      connection = fdb.connect(user=user_name, password=user_password, dsn=db_name, charset="WIN1252")
-   except Error as err:
-       print(f"Error: '{err}'")
-   return connection
-
-
-def read_query(connection, query):
-    cursor = connection.cursor()
-    result = None
-    try:
-        cursor.execute(query)
-        result = cursor.fetchall()
-    except Error as err:
-        return result, err
-    return result, "ok"
-
-
-def exec_query(connection, query):
-    cursor = connection.cursor()
-    try:
-        cursor.execute(query)
-        connection.commit()
-        msg = "OK"
-    except Error as err:
-        msg = err
-    return msg
 
 @app.route('/')
 def index():
@@ -92,7 +69,7 @@ def documentacao(tipo):
    if tipo == '1':
       return render_template("index_services.html")
    else:
-     return jsonify('index_services.html')
+      return jsonify('index_services.html')
 
 @app.route('/valida/<tipo>', methods=["POST", "GET"])
 def valida(tipo):
@@ -105,9 +82,9 @@ def valida(tipo):
        cnpj = request.form.get('user')
        senha = request.form.get('pass')
 
-     conexao = create_db_connection(user_db, password_db, name_db)
+     conexao = funcoes.create_db_connection(user_db, password_db, name_db)
      sql = "select cli_senha_web, cli_razao, cli_codigo from clientes where cli_status = 0 and cli_cnpj = '"+cnpj+"'"
-     cursor, msg = read_query(conexao, sql)
+     cursor, msg = funcoes.read_query(conexao, sql)
      conexao.close()
      if cursor:
         if cursor[0][0] != senha:
@@ -118,7 +95,6 @@ def valida(tipo):
            else:
               retorno = {"mensagem": "usuário ou senha inválido", "code": 400}
         else:
-           print('ok')
            session["cnpj"] = cnpj
            session["idcli"] = cursor[0][2]
            session["nome_cliente"] = cursor[0][1]
@@ -131,9 +107,8 @@ def valida(tipo):
                       "token": session.get("uid")}
            if tipo == '1':
               return render_template("servicos.html", nome_cliente=cursor[0][1], idCli=cursor[0][2], Mensagem=None,
-                                  sessao=session.get("uid"), retorno=retorno)
+                                  sessao=session.get("uid"), retorno=retorno, cnpj=cnpj)
      else:
-        print('teste')
         retorno = {"mensagem": "cnpj inválido!", "code": 400}
         if tipo == '1':
           flash("CNPJ ou senha inválido!")
@@ -149,6 +124,117 @@ def logoff(sessao):
     session["nome_cliente"] = None
     session["uid"] = None
     return redirect("/")
+
+
+@app.route("/mensagem/<idCli>/<nome_cliente>/<cnpj>")
+def mensagem(idCli, nome_cliente, cnpj):
+   return render_template("mensagem.html", idCli=idCli, nome_cliente=nome_cliente, cnpj=cnpj)
+
+
+@app.route("/enviaMsg/<tipo>/<idCli>/<nome_cliente>/<cnpj>", methods=["POST", "GET"])
+def enviaMsg(tipo, idCli, nome_cliente, cnpj):
+     if tipo == "1":
+        Fone = request.form.get("fone")
+        Mensagem = request.form.get('mensagem')
+        file = request.files['file']
+        Arquivo = ""
+        if file:
+            Arquivo = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], Arquivo)
+            Arquivo = file_path
+            file.save(file_path)
+            print(file_path)
+     else:
+        dados = request.get_json()
+        Fone = dados['fone']
+        Mensagem = dados['mensagem']
+        Arquivo = dados['arquivo']
+
+     sql = "SELECT CLI_BANCO_CAMINHO, CLI_BANCO_SENHA, CLI_BANCO_USUARIO, CLI_APIKEY, CLI_CONTA "
+     sql = sql + "FROM CLIENTES WHERE CLI_CODIGO = "+str(idCli)
+     conexao = funcoes.create_db_connection(user_db, password_db, name_db)
+     query, msg = funcoes.read_query(conexao, sql)
+     conexao.close()
+     gravar = False
+     banco = ""
+     usuario = ""
+     senha = ""
+     if query[0][3] and query[0][3] != "":
+        apikey = query[0][3]
+        conta = query[0][4]
+     else:
+        sql = "SELECT IWA_APIKEY, IWA_TELEFONE FROM INSTANCIASWA"
+        conexao2 = funcoes.create_db_connection(query[0][2], query[0][1], query[0][0])
+        instancia, msg = funcoes.read_query(conexao2, sql)
+        conexao2.close()
+        apikey = instancia[0][0]
+        conta = instancia[0][1]
+        banco = query[0][0]
+        usuario = query[0][2]
+        senha = query[0][1]
+        gravar = True
+
+     tipo = ""
+     tipo2 = ""
+     encoded = None
+     if "jpg" in Arquivo:
+        tipo = "image/jpeg"
+        tipo2 = "image"
+        encoded = funcoes.converteimagem(Arquivo)
+     elif "pdf" in Arquivo:
+        tipo = "application/pdf"
+        tipo2 = "document"
+        encoded = funcoes.convertePDF(Arquivo)
+     elif Arquivo != "":
+        tipo = "application/xml"
+        tipo2 = "document"
+        encoded = funcoes.convertePDF(Arquivo)
+     nome_arquivo = ""
+     if Arquivo != "":
+        nome_arquivo = os.path.basename(Arquivo)
+     Mensagem = "*"+nome_cliente+"*\n"+Mensagem
+     Mensagem = Mensagem+"\n\n_Enviado pelo sistema Simbolus_"
+
+     if Arquivo != "":
+        retorno = enviaArquivo(apikey, conta, Fone, "0", Mensagem,
+                               nome_arquivo, encoded, tipo, tipo2)
+     else:
+        retorno = enviaTexto(apikey, conta, Fone, "0", Mensagem)
+     idRetorno = ""
+     status = ""
+     if retorno[0] == 200:
+        idRetorno = retorno[1]['message_id']
+        status = retorno[1]['phone_state']
+        enviado = 1
+     elif retorno[0] == 404:
+        status = retorno[1]['result_message']
+        enviado = -1
+
+     if gravar:
+        sql = "SELECT GEN_ID(GERA_ID_MENSAGEM_WSAPP, 1) FROM RDB$DATABASE"
+        conexao2 = funcoes.create_db_connection(usuario, senha, banco)
+        gen, msg = funcoes.read_query(conexao2, sql)
+        conexao2.close()
+        ID = gen[0][0]
+        sql = "INSERT INTO MENSAGEM_WSAPP (MWA_CODIGO, MWA_INCLUSAO, USU_INCLUSAO, "
+        sql = sql + "MWA_ENVIAR_PARA, MWA_LOCAL, MWA_DOCUMENTO, MWA_ENVIADO, "
+        sql = sql + "MWA_ARQUIVO1, MWA_MENSAGEM, MWA_APIKEY, MWA_INSTANCIA, "
+        sql = sql + "MWA_EMPRESA, MWA_CNPJ, MWA_RETORNO, MWA_ID, MWA_DATA_ENVIO) "
+        sql = sql + "VALUES ("+str(ID)+", CURRENT_TIMESTAMP, "
+        sql = sql + "0, '"+Fone+"', 'WEB', 'WEB', "+str(enviado)+", '"+nome_arquivo+"', '"+Mensagem
+        sql = sql + "', '"+apikey+"', '"+conta+"', '"+nome_cliente+"', '"+cnpj+"', '"
+        sql = sql + status+"', '"+str(idRetorno)+"', CURRENT_TIMESTAMP);"
+        print(sql)
+        conexao2 = funcoes.create_db_connection(usuario, senha, banco)
+        msg = funcoes.exec_query(conexao2, sql)
+        print(msg)
+        conexao2.close()
+
+     print(retorno[0])
+     print(retorno[1])
+     flash("Mensagem enviada com sucesso!")
+     return render_template("mensagem.html", idCli=idCli, nome_cliente=nome_cliente, retorno=retorno, cnpj=cnpj)
+
 
 app.run(host='192.168.2.190')
 #  serve(app, host="192.168.2.190", port=5000)

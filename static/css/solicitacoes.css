@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+
+img {
+    width: 100%;
+    max-width: 200px; /* Limita a imagem para telas maiores */
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    font-size: 12px;
+    background-color: #1d3565;
+    margin: 0;
+    padding: 0;
+}
+
+legend {
+    border: 1px solid #1d3565;
+    padding: 10px;
+    text-align: center;
+    background-color: #1d3565;
+    border-radius: 8px;
+    position: relative;
+}
+
+fieldset {
+    border: 3px solid #1d3565;
+    padding: 15px;
+}
+
+.page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 15px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px; /* Limita para telas grandes */
+    box-sizing: border-box;
+    text-align: center;
+}
+
+#sis, #tipo {
+    font-size: 11px;
+    width: 100%;
+    max-width: 120px; /* Para limitar o tamanho */
+    border: none;
+    padding: 3px;
+    border-radius: 10px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+input {
+    background: none;
+    border: none;
+    border-bottom: 1px solid white;
+    outline: none;
+    color: white;
+    font-size: 12px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#obs {
+    font-family: "Poppins", sans-serif;
+    resize: none;
+    outline: none;
+    width: 100%;
+}
+
+.btn {
+    background: linear-gradient(to right, #8b5689, #135390);
+    font-family: "Poppins", sans-serif;
+    width: 100%;
+    border: none;
+    padding: 10px;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 10px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+
+.btn:hover {
+    background: linear-gradient(to right, #be5640, #1f7e5a);
+}
+
+a {
+    text-decoration: none;
+    color: #fff;
+    font-family: "Poppins", sans-serif;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+}
+
+a:hover {
+    color: #1d3565;
+}
+
+#footer {
+    font-size: 10px;
+}
+
+/* Responsividade */
+@media (min-width: 600px) {
+    .page {
+        width: 70%;
+    }
+}
+
+@media (min-width: 768px) {
+    .page {
+        width: 50%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .page {
+        width: 30%;
+    }
+}

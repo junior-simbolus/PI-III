@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Envio de Mensagens</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/solicitacoes.css')}}">
+</head>
+
+<body>
+ <img src="/static/images/Logo.png" alt=""/><br>
+ {% set mensagens = get_flashed_messages() %}
+    {% if mensagens %}
+        <div>
+            <ul align="center">
+            {% for msg in mensagens %}
+                {{msg}}
+            {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    <div class="page">
+        <form  class="formSolicitacao" action="/enviaMsg/1/{{idCli}}/{{nome_cliente}}/{{cnpj}}" method="post" enctype="multipart/form-data">
+            <fieldset>
+                <legend>Solicitação de Serviço</legend>
+                <label for="fone">Telefone:</label>
+                <input type="text" id="fone" name="fone" placeholder="(DD) XXXXXXXXX" maxlength="15" required>
+                <div id="telefoneError" class="error-message"></div>
+                 <label for="file">Arquivo (PDF/JPG):</label>
+                 <input type="file" id="file" name="file" accept=".pdf, .jpg"><div id="arquivoError" class="error-message"></div>
+                <label for="mensagem">Mensagem</label><br>
+                <textarea name="mensagem" id="mensagem" rows="9", cols="37"></textarea><br><br>
+                <button class="btn">Enviar</button><br><br>
+                <a href="/mensagem/{{idCli}}/{{nome_cliente}}/{{cnpj}}" align="center">Voltar para o menu</a>
+            </fieldset>
+        </form>
+    <script>
+        const foneInput = document.getElementById('fone');
+        const fileInput = document.getElementById('file');
+        const uploadForm = document.getElementById('uploadForm');
+        const foneError = document.getElementById('foneError');
+        const fileError = document.getElementById('fileError');
+
+        // --- Máscara e Validação de Telefone ---
+        foneInput.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+            let formattedValue = '';
+
+            if (value.length > 0) {
+                formattedValue = '(' + value.substring(0, 2);
+            }
+            if (value.length > 2) {
+                formattedValue += ') ' + value.substring(2, 11);
+            }
+            e.target.value = formattedValue;
+
+            // Validação visual enquanto digita
+            validarTelefone();
+        });
+
+        function validarTelefone() {
+            const numeroLimpo = foneInput.value.replace(/\D/g, '');
+            if (numeroLimpo.length === 10 || numeroLimpo.length === 11) {
+                foneError.textContent = ''; // Limpa mensagem de erro
+                return true;
+            } else {
+                foneError.textContent = 'Telefone deve ter 10 ou 11 dígitos (incluindo DDD).';
+                return false;
+            }
+        }
+
+        // --- Validação de Tipo de Arquivo ---
+        function validarArquivo() {
+            const file = fileInput.files[0];
+            if (file) {
+               const fileName = file.name;
+               const fileExtension = fileName.split('.').pop().toLowerCase();
+               const allowedExtensions = ['pdf', 'jpg', 'jpeg'];
+
+               if (allowedExtensions.includes(fileExtension)) {
+                   fileError.textContent = ''; // Limpa mensagem de erro
+                   return true;
+               } else {
+                   fileError.textContent = 'Apenas arquivos PDF ou JPG/JPEG são permitidos.';
+                   fileInput.value = ''; // Limpa a seleção do arquivo
+                   return false;
+               }
+             }
+             else
+             {
+             return true;
+             }
+        }
+
+        // --- Validação ao Submeter o Formulário ---
+        uploadForm.addEventListener('submit', function (event) {
+            const isfoneValid = validarTelefone();
+            const isfileValid = validarArquivo();
+
+            if (!isfoneValid || !isfileValid) {
+                event.preventDefault(); // Impede o envio do formulário se a validação falhar
+            }
+        });
+
+        // Opcional: Validação do arquivo quando o usuário seleciona
+        fileInput.addEventListener('change', validarArquivo);
+
+    </script>
+    </div>
+</body>
+</html>
+
