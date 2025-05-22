@@ -43,10 +43,31 @@ def enviaTexto(apikey, conta, Fone, ID, Texto):
         "message_type": "text",
         "message_body": Texto
         }
+    print (dataTexto)
     response = requests.post(url_send, headers=header, json=dataTexto)
     return response.status_code, response.json()
 
-@app.route('/enviaTexto/<apikey>/<conta>/<Fone>/<id>/<Texto>/<nome_rquivo>/<encoded>/<tipo>/<tipo2>', methods=["POST"])
+@app.route('/enviaTexto2/', methods=["POST"])
+def enviaTexto2():
+    dados = request.get_json()
+    apikey = dados.get('apikey')
+    conta = dados.get('conta')
+    Fone = dados.get('Fone')
+    Texto = dados.get('Texto')
+    ID = dados.get('id')
+    dataTexto = {
+        "apikey": apikey,
+        "phone_number": conta,
+        "contact_phone_number": "55"+Fone,
+        "message_custom_id": ID,
+        "message_type": "text",
+        "message_body": Texto
+        }
+    print (dataTexto)
+    response = requests.post(url_send, headers=header, json=dataTexto)
+    return response.json()
+
+@app.route('/enviaArquivo/<apikey>/<conta>/<Fone>/<id>/<Texto>/<nome_arquivo>/<encoded>/<tipo>/<tipo2>', methods=["POST"])
 def enviaArquivo(apikey, conta, Fone, ID, Texto, nome_arquivo, encoded, tipo, tipo2):
     dataImagem = {
         "apikey": apikey,
@@ -64,12 +85,53 @@ def enviaArquivo(apikey, conta, Fone, ID, Texto, nome_arquivo, encoded, tipo, ti
     response = requests.post(url_send, headers=header, json=dataImagem)
     return response.status_code, response.json()
 
+@app.route('/enviaArquivo2/', methods=["POST"])
+def enviaArquivo2():
+    dados = request.get_json()
+    apikey = dados.get('apikey')
+    conta = dados.get('conta')
+    Fone = dados.get('Fone')
+    Texto = dados.get('Texto')
+    tipo2 = dados.get('tipo2')
+    tipo = dados.get('tipo')
+    encoded = dados.get('encoded')
+    nome_arquivo = dados.get('nome_arquivo')
+    ID = dados.get('id')
+    dataImagem = {
+        "apikey": apikey,
+        "phone_number": conta,
+        "contact_phone_number": "55"+Fone,
+        "message_custom_id": ID,
+        "message_type": tipo2,
+        "check_status": "1",
+        "message_body_mimetype": tipo,
+        "message_body_filename": nome_arquivo,
+        "message_caption": Texto,
+        "message_body": encoded
+        }
+    print (dataImagem)
+    response = requests.post(url_send, headers=header, json=dataImagem)
+    return response.json()
+
 @app.route('/documentacao/<tipo>', methods=["POST", "GET"])
 def documentacao(tipo):
    if tipo == '1':
       return render_template("index_services.html")
    else:
       return jsonify('index_services.html')
+
+@app.route('/servicos')
+def servicos():
+    dados = request.get_json()
+    nome_cliente = dados['nome_cliente']
+    idCli = dados['idCli']
+    sessao = dados['token']
+    cnpj = dados['cnpj']
+    apikey = dados['apikey']
+    conta = dados['conta']
+
+    return render_template("servicos.html", nome_cliente=nome_cliente, idCli=idCli,
+                                  sessao=sessao, cnpj=cnpj, apikey=apikey, conta=conta)
 
 @app.route('/valida/<tipo>', methods=["POST", "GET"])
 def valida(tipo):
@@ -83,7 +145,8 @@ def valida(tipo):
        senha = request.form.get('pass')
 
      conexao = funcoes.create_db_connection(user_db, password_db, name_db)
-     sql = "select cli_senha_web, cli_razao, cli_codigo from clientes where cli_status = 0 and cli_cnpj = '"+cnpj+"'"
+     sql = "select cli_senha_web, cli_razao, cli_codigo, cli_banco_caminho, cli_banco_senha, cli_banco_usuario, "
+     sql = sql + "cli_apikey, cli_conta from clientes where cli_status = 0 and cli_cnpj = '"+cnpj+"'"
      cursor, msg = funcoes.read_query(conexao, sql)
      conexao.close()
      if cursor:
@@ -95,6 +158,22 @@ def valida(tipo):
            else:
               retorno = {"mensagem": "usuário ou senha inválido", "code": 400}
         else:
+           banco = cursor[0][3]
+           usuario = cursor[0][5]
+           senha = cursor[0][4]
+           apikey = ""
+           conta = ""
+           if cursor[0][6] and cursor[0][6] != "":
+              apikey = cursor[0][6]
+              conta = cursor[0][7]
+           elif banco != "":
+              sql = "SELECT IWA_APIKEY, IWA_TELEFONE FROM INSTANCIASWA"
+              conexao2 = funcoes.create_db_connection(usuario, senha, banco)
+              instancia, msg = funcoes.read_query(conexao2, sql)
+              conexao2.close()
+              apikey = instancia[0][0]
+              conta = instancia[0][1]
+
            session["cnpj"] = cnpj
            session["idcli"] = cursor[0][2]
            session["nome_cliente"] = cursor[0][1]
@@ -104,7 +183,10 @@ def valida(tipo):
                       "nome_cliente": cursor[0][1],
                       "cnpj": cnpj,
                       "code": 200,
-                      "token": session.get("uid")}
+                      "token": session.get("uid"),
+                      "apikey": apikey,
+                      "conta": conta
+                      }
            if tipo == '1':
               return render_template("servicos.html", nome_cliente=cursor[0][1], idCli=cursor[0][2], Mensagem=None,
                                   sessao=session.get("uid"), retorno=retorno, cnpj=cnpj)
@@ -115,6 +197,7 @@ def valida(tipo):
           return render_template("login.html", retorno=retorno)
    except Error as err:
      retorno = {"mensagem": err, "code": 400}
+   print(retorno)
    return jsonify(retorno)
 
 @app.route("/logoff/<sessao>")
@@ -123,6 +206,8 @@ def logoff(sessao):
     session["cnpj"] = None
     session["nome_cliente"] = None
     session["uid"] = None
+    session["apikey"] = None
+    session["conta"] = None
     return redirect("/")
 
 

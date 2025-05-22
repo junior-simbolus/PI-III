@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação dos Serviços</title>
+    <link rel="stylesheet" href="/css/documentacao.css">
+    <style>
+        .accessibility-controls {
+            position: fixed; /* Fixa na tela */
+            top: 10px;       /* Perto do topo */
+            right: 10px;     /* No canto superior direito */
+            background-color: rgba(255, 255, 255, 0.8); /* Fundo semi-transparente */
+            padding: 5px 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000; /* Garante que fique acima de outros elementos */
+        }
+        .accessibility-controls button {
+            background-color: #007bff; /* Cor azul para os botões */
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            margin: 0 3px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+        }
+        .accessibility-controls button:hover {
+            background-color: #0056b3;
+        }
+        /* Estilo para a classe que será aplicada ao corpo */
+        body.font-size-small { font-size: 0.9em; } /* 90% do tamanho padrão */
+        body.font-size-normal { font-size: 1em; }   /* 100% do tamanho padrão */
+        body.font-size-large { font-size: 1.1em; }  /* 110% do tamanho padrão */
+        body.font-size-x-large { font-size: 1.2em; } /* 120% do tamanho padrão */
+    </style>
+</head>
+<body>
+<div class="accessibility-controls">
+        <button id="resetFontSize">A</button>
+        <button id="decreaseFontSize">A-</button>
+        <button id="increaseFontSize">A+</button>
+    </div>
+    <% // Lógica para exibir mensagens (simulando get_flashed_messages) %>
+    <% if (messages && messages.length > 0) { %>
+        <div class="flash-messages">
+            <ul align="center">
+            <% messages.forEach(function(msg) { %>
+                <li><%= msg %></li>
+            <% }); %>
+            </ul>
+        </div>
+    <% } %>
+
+        <div class="page">
+            <form  class="formLogin" action="/login2" method="post">
+                <fieldset>
+                    <legend>Serviços</legend>
+                    <table border="1" width="100%" cellpadding="4">
+                        <tr><td colspan="2" align="center">método: enviaTexto</td></tr>
+                        <tr><td>Parâmetro</td><td>Descrição</td></tr>
+                        <tr><td>apikey</td><td>Chave api do cliente</td></tr>
+                        <tr><td>conta</td><td>Celular com ddd do cliente</td></tr>
+                        <tr><td>Fone</td><td>Telefone para envio da mensagem</td></tr>
+                        <tr><td>id</td><td>Identificador do cliente para identificar mensagem</td></tr>
+                        <tr><td>Texto</td><td>Texto que será enviado</td></tr>
+                    </table><br>
+                    <table border="1" width="100%" cellpadding="4">
+                        <tr><td colspan="2" align="center">método: enviaArquivo</td></tr>
+                        <tr><td>Parâmetro</td><td>Descrição</td></tr>
+                        <tr><td>apikey</td><td>Chave api do cliente</td></tr>
+                        <tr><td>conta</td><td>Celular com ddd do cliente</td></tr>
+                        <tr><td>Fone</td><td>Telefone para envio da mensagem</td></tr>
+                        <tr><td>id</td><td>Identificador do cliente para identificar mensagem</td></tr>
+                        <tr><td>Texto</td><td>Texto que será enviado</td></tr>
+                        <tr><td>nome_arquivo</td><td>nome do arquivo que será enviado</td></tr>
+                        <tr><td>encoded</td><td>arquivo na base64</td></tr>
+                        <tr><td>tipo</td><td>"image/jpeg" ou "documento/pdf" ou "documento/xml"</td></tr>
+                        <tr><td>tipo2</td><td>"image" ou "document"</td></tr>
+                    </table>
+                </fieldset>
+        </form>
+    </div>
+<script src="/js/accessibility.js"></script>
+</body>
+</html>

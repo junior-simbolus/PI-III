@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+
+img {
+    width: 100%;
+    max-width: 200px; /* Limite máximo para a imagem */
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    font-size: 12px;
+    background-color: #1d3565;
+    margin: 0;
+    padding: 0;
+}
+
+legend {
+    border: 1px solid #1d3565;
+    padding: 10px;
+    text-align: center;
+    background-color: #1d3565;
+    border-radius: 8px;
+    position: relative;
+}
+
+fieldset {
+    border: 3px solid #1d3565;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* REMOVA ESTA LINHA: color: white; */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.6); /* Cor de fundo da caixa .page */
+    padding: 15px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: lighter;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #1d3565;
+}
+
+/* Responsividade */
+@media (min-width: 600px) {
+    .page {
+        width: 70%;
+    }
+}
+
+@media (min-width: 768px) {
+    .page {
+        width: 50%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .page {
+        width: 30%;
+    }
+}
+
+/* Estilos para as mensagens flash */
+.flash-messages {
+    margin: 20px 0;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.flash-messages ul {
+    list-style: none; /* Remove os marcadores de lista */
+    padding: 0;
+    margin: 0;
+}
+
+.flash-messages li {
+    font-size: 1.2em; /* Torna a fonte 20% maior que o padrão */
+    color: #008000; /* Verde escuro para mensagens de sucesso */
+    /* Você pode ajustar a cor: #FF0000 para vermelho (erro), #0000FF para azul (informação), etc. */
+    line-height: 1.5; /* Espaçamento entre linhas */
+}
+
+.client-info {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: white;             /* Garante que o texto seja BRANCO */
+    background-color: #333;   /* Garante que o fundo da caixa seja CINZA ESCURO */
+    padding: 10px 15px;       /* Espaçamento interno para o texto dentro da caixa */
+    border-radius: 5px;
+    display: block;           /* Para que ocupa sua própria linha */
+    width: fit-content;       /* Largura se ajusta ao conteúdo */
+    margin-left: auto;        /* Centraliza a caixa */
+    margin-right: auto;       /* Centraliza a caixa */
+    min-width: 250px;         /* Largura mínima da caixa */
+    max-width: 90%;           /* Largura máxima da caixa para responsividade */
+    box-sizing: border-box;   /* Inclui padding/border na largura/altura total */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Sombra sutil */
+}
+
+.client-info label {
+    color: inherit;               /* Herda a cor BRANCA da div .client-info */
+    background-color: transparent; /* Garante que a label não tenha um fundo próprio */
+    display: block;               /* Faz a label ocupar todo o espaço dentro da div */
+    width: 100%;                  /* Preenche a largura da div pai */
+    text-align: center;           /* Centraliza o texto dentro da label */
+    padding: 0;                   /* Remove paddings padrão */
+    margin: 0;                    /* Remove margins padrão */
+}

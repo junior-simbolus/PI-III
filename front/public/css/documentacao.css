@@ -1,0 +1,227 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* Estilos globais e de corpo */
+body {
+    font-family: "Poppins", sans-serif;
+    font-size: 14px; /* Aumentado para melhor legibilidade na documentação */
+    background-color: #1d3565; /* Fundo escuro do seu CSS de login */
+    color: white; /* Cor do texto padrão para contraste */
+    margin: 0;
+    padding: 20px; /* Adiciona um padding geral ao corpo */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh; /* Garante que o corpo ocupe a altura total da viewport */
+    box-sizing: border-box; /* Inclui padding e borda no cálculo da largura/altura */
+}
+
+/* Estilo para o logo */
+img {
+    width: 100%;
+    max-width: 180px; /* Ajuste o tamanho máximo da logo */
+    height: auto;
+    margin-bottom: 25px; /* Espaço abaixo da logo */
+}
+
+/* Contêiner principal da página (o equivalente ao .page do login) */
+.page {
+    background-color: rgba(0, 0, 0, 0.6); /* Fundo semi-transparente como no seu CSS de login */
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Sombra suave */
+    width: 95%; /* Ocupa a maior parte da largura em telas pequenas */
+    max-width: 800px; /* Largura máxima para evitar que fique muito esticado em telas grandes */
+    margin-bottom: 25px; /* Espaço abaixo do bloco principal */
+    box-sizing: border-box;
+}
+
+/* Estilos para o fieldset e legend */
+fieldset {
+    border: 3px solid #1d3565; /* Borda do fieldset com a cor principal */
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+legend {
+    background-color: #1d3565; /* Fundo da legenda com a cor principal */
+    color: white;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 1.3em; /* Tamanho maior para o título da seção */
+    font-weight: 600;
+    text-align: center;
+    border: none; /* Remove a borda original da legenda */
+    margin-bottom: 15px; /* Espaço abaixo da legenda */
+}
+
+/* Estilos das tabelas */
+table {
+    width: 100%;
+    padding: 4px;
+    border-collapse: collapse; /* Garante que as bordas das células se unam */
+    margin-top: 15px;
+    background-color: rgba(255, 255, 255, 0.05); /* Fundo muito levemente transparente para as tabelas */
+    border-radius: 8px;
+    overflow: hidden; /* Garante que bordas arredondadas funcionem com bordas colapsadas */
+}
+
+th, td {
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Borda mais suave para as células, com leve transparência */
+    padding: 4px; /* Aumenta o padding para melhor legibilidade */
+    text-align: left;
+    font-size: 13px; /* Tamanho da fonte para conteúdo da tabela */
+}
+
+th {
+    background-color: rgba(255, 255, 255, 0.1); /* Fundo um pouco mais escuro para cabeçalhos */
+    font-weight: 600;
+}
+
+/* Estilo para células mescladas (colspan) */
+td[colspan] {
+    text-align: center;
+    font-weight: 600;
+    background-color: rgba(255, 255, 255, 0.08); /* Fundo diferente para células mescladas */
+}
+
+/* Estilos de input (se houver no formulário, embora esta seja uma página de docs) */
+input {
+    background: none;
+    border: none;
+    border-bottom: 1px solid white; /* Borda inferior branca como no seu CSS de login */
+    outline: none;
+    color: white;
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    width: 100%;
+    padding: 8px 0;
+    margin-bottom: 15px;
+    transition: border-bottom 0.3s ease;
+}
+
+input:focus {
+    border-bottom: 1px solid white;
+}
+
+/* Estilos para o botão (se houver) */
+.btn {
+    background: linear-gradient(to right, #8b5689, #135390); /* Gradiente do seu CSS de login */
+    font-family: "Poppins", sans-serif;
+    width: 100%;
+    border: none;
+    padding: 12px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn:hover {
+    background: linear-gradient(to right, #be5640, #1f7e5a); /* Gradiente de hover do seu CSS de login */
+}
+
+/* Estilos para as mensagens flash */
+div ul {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+    background-color: rgba(255, 255, 0, 0.8); /* Fundo amarelo para mensagens */
+    color: #333;
+    border-radius: 8px;
+    padding: 10px 20px;
+    text-align: center;
+    font-weight: 500;
+    max-width: 600px;
+    width: 100%;
+    box-sizing: border-box;
+}
+div ul li {
+    margin: 5px 0;
+}
+
+
+/* --- Responsividade --- */
+
+/* Telas médias (tablets) */
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+    }
+
+    .page {
+        padding: 20px;
+        width: 100%; /* Ocupa mais largura em telas menores */
+    }
+
+    th, td {
+        padding: 10px; /* Reduz padding em telas menores */
+        font-size: 12px;
+    }
+
+    /* Ajuste para tabelas em telas muito pequenas (scroll horizontal) */
+    .table-responsive {
+        overflow-x: auto; /* Adiciona barra de rolagem horizontal se a tabela for muito larga */
+        -webkit-overflow-scrolling: touch; /* Melhora o scroll em dispositivos iOS */
+    }
+
+    table {
+        min-width: 500px; /* Garante uma largura mínima para as tabelas em telas pequenas */
+    }
+}
+
+/* Telas pequenas (smartphones) */
+@media (max-width: 480px) {
+    body {
+        font-size: 13px;
+        padding: 10px;
+    }
+
+    .page {
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    img {
+        max-width: 150px;
+    }
+
+    legend {
+        font-size: 1.1em;
+        padding: 6px 10px;
+    }
+
+    th, td {
+        padding: 8px;
+        font-size: 11px;
+    }
+
+    /* Reduz o min-width da tabela para telas muito pequenas */
+    table {
+        min-width: 400px;
+    }
+}
+
+/* Estilos para as mensagens flash */
+.flash-messages {
+    margin: 20px 0;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.flash-messages ul {
+    list-style: none; /* Remove os marcadores de lista */
+    padding: 0;
+    margin: 0;
+}
+
+.flash-messages li {
+    font-size: 1.2em; /* Torna a fonte 20% maior que o padrão */
+    color: #008000; /* Verde escuro para mensagens de sucesso */
+    /* Você pode ajustar a cor: #FF0000 para vermelho (erro), #0000FF para azul (informação), etc. */
+    line-height: 1.5; /* Espaçamento entre linhas */
+}

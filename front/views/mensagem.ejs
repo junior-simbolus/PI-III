@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Envio de Mensagens</title>
+    <link rel="stylesheet" href="/css/mensagem.css">
+        <style>
+        .accessibility-controls {
+            position: fixed; /* Fixa na tela */
+            top: 10px;       /* Perto do topo */
+            right: 10px;     /* No canto superior direito */
+            background-color: rgba(255, 255, 255, 0.8); /* Fundo semi-transparente */
+            padding: 5px 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000; /* Garante que fique acima de outros elementos */
+        }
+        .accessibility-controls button {
+            background-color: #007bff; /* Cor azul para os botões */
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            margin: 0 3px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+        }
+        .accessibility-controls button:hover {
+            background-color: #0056b3;
+        }
+        /* Estilo para a classe que será aplicada ao corpo */
+        body.font-size-small { font-size: 0.9em; } /* 90% do tamanho padrão */
+        body.font-size-normal { font-size: 1em; }   /* 100% do tamanho padrão */
+        body.font-size-large { font-size: 1.1em; }  /* 110% do tamanho padrão */
+        body.font-size-x-large { font-size: 1.2em; } /* 120% do tamanho padrão */
+    </style>
+
+</head>
+
+<body>
+<div class="accessibility-controls">
+        <button id="resetFontSize">A</button>
+        <button id="decreaseFontSize">A-</button>
+        <button id="increaseFontSize">+</button>
+    </div>
+ <img src="/images/Logo.png" alt="Logo da Simbolus"/><br>
+ <% // A variável 'messages' já deve estar disponível via res.locals no seu app.js %>
+ <% if (messages && messages.length > 0) { %>
+        <div class="flash-messages">
+            <ul align="center">
+            <% messages.forEach(function(msg) { %>
+                <li><%= msg %></li>
+            <% }); %>
+            </ul>
+        </div>
+    <% } %>
+    <div class="page">
+        <form class="formMensagem" action="/enviaMsg" method="post" enctype="multipart/form-data" id="uploadForm">
+            <fieldset>
+                <legend>Solicitação de Serviço</legend>
+                <label for="fone">Telefone:</label>
+                <input type="text" id="fone" name="fone" placeholder="(DD) XXXXXXXXX" maxlength="15" required>
+                <div id="telefoneError" class="error-message"></div>
+                 <label for="file">Arquivo (PDF/JPG):</label>
+                 <input type="file" id="file" name="file" accept=".pdf, .jpg, .jpeg"><div id="arquivoError" class="error-message"></div>
+                <label for="mensagem">Mensagem</label><br>
+                <textarea name="mensagem" id="mensagem" rows="9" cols="37"></textarea><br><br>
+                <button type="submit" class="btn">Enviar</button><br><br>
+                <a href="/servicos" align="center">Voltar para o menu</a>
+            </fieldset>
+        </form>
+    </div>
+    <script src="/js/accessibility.js"></script>
+    <script src="/js/formValidator.js"></script>
+</body>
+</html>

@@ -92,3 +92,25 @@ input {
         width: 25%;
     }
 }
+
+/* Estilos para as mensagens flash */
+.flash-messages {
+    margin: 20px 0;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.flash-messages ul {
+    list-style: none; /* Remove os marcadores de lista */
+    padding: 0;
+    margin: 0;
+}
+
+.flash-messages li {
+    font-size: 1.2em; /* Torna a fonte 20% maior que o padrão */
+    color: #008000; /* Verde escuro para mensagens de sucesso */
+    /* Você pode ajustar a cor: #FF0000 para vermelho (erro), #0000FF para azul (informação), etc. */
+    line-height: 1.5; /* Espaçamento entre linhas */
+}
