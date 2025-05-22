@@ -22,7 +22,7 @@ CORS(app)
 url_send = "https://app.whatsgw.com.br/api/WhatsGw/Send"
 user_db = "sysdba"
 password_db = "masterkey"
-name_db = "simbolussi.ddns.com.br/3050:C:\\Simbolus\\Banco\\bSimbolus_Gestor.fdb"
+name_db = "nome e caminho do banco"
 
 header = {
     "Content-Type": "application/json"
