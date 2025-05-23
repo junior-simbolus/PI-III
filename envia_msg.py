@@ -24,7 +24,7 @@ CORS(app, supports_credentials=True)
 url_send = "https://app.whatsgw.com.br/api/WhatsGw/Send"
 user_db = "sysdba"
 password_db = "masterkey"
-name_db = "simbolussi.ddns.com.br:c:\\simbolus\\banco\\bSimbolus_Gestor.fdb"
+name_db = "caminho do servidor e banco firebird da Simbolus Sistemas"
 
 header = {
     "Content-Type": "application/json"
