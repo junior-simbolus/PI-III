@@ -57,6 +57,31 @@ def enviaTexto(apikey, conta, Fone, ID, Texto):
     response = requests.post(url_send, headers=header, json=dataTexto)
     return response.status_code, response.json()
 
+@app.route('/listagem/<status/', methods=["POST"])
+def listagem(status):
+    dados = request.get_json()
+    banco = dados.get('banco')
+    usuario = dados.ge('usuario')
+    senha = dados.get('senha')
+
+    sql = "SELECT MWA_CODIGO, MWA_INCLUSAO, MWA_ENVIAR_PARA, MWA_LOCAL, MWA_DATA_ENVIO, "
+    sql = sql + "MWA_ARQUIVO1, MWA_ID FROM MENSAGEM_WAPP WHERE MWA_CNPJ = '"+cnpj"' "
+    sql = sql + "AND MWA_ENVIADO = "+str(status)+" ORDER BY MWA_INCLUSAO"
+    conexao = funcoes.create_db_connection(usuario, senha, banco)
+    query, msg = funcoes.read_query(conexao, sql)
+    conexao.close()
+
+    columns = [description[0] for description in query.description]
+    data = []
+    for row in query.fetchall():
+        row_dict = {}
+        for i, column in enumerate(columns):
+            row_dict[column] = row[i]
+        data.append(row_dict)
+
+    json_output = json.dumps(data, indent=4, ensure_ascii=False)
+    return json_output
+
 @app.route('/enviaTexto2/', methods=["POST"])
 def enviaTexto2():
     dados = request.get_json()

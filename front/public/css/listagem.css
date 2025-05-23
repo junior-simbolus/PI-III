@@ -1,0 +1,308 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+
+/* Reutilize estilos comuns do seu mensagem.css para consistência */
+body {
+    font-family: "Poppins", sans-serif;
+    font-size: 12px;
+    background-color: #1d3565;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column; /* Use column para empilhar logo, mensagens, page */
+    justify-content: flex-start; /* Alinha ao topo */
+    align-items: center;
+    min-height: 100vh;
+}
+
+img {
+    width: 100%;
+    max-width: 200px;
+    margin-top: 20px; /* Espaço acima da logo */
+    margin-bottom: 20px;
+}
+
+.page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 25px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 900px; /* Aumentado para acomodar a tabela */
+    box-sizing: border-box;
+    text-align: center;
+    margin-bottom: 20px; /* Espaço na parte inferior da página */
+}
+
+h1, h2, legend {
+    color: white;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+}
+
+legend {
+    border: 1px solid #1d3565;
+    padding: 10px;
+    text-align: center;
+    background-color: #1d3565;
+    border-radius: 8px;
+    position: relative;
+    color: white;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 15px;
+}
+
+fieldset {
+    border: 3px solid #1d3565;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.05);
+    width: 100%; /* Ocupa a largura do .page */
+    box-sizing: border-box;
+}
+
+.client-info {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: white;
+    background-color: #333;
+    padding: 10px 15px;
+    border-radius: 5px;
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    min-width: 250px;
+    max-width: 90%;
+    box-sizing: border-box;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.client-info label {
+    color: inherit;
+    background-color: transparent;
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
+/* Estilos para a tabela */
+.table-container {
+    width: 100%;
+    overflow-x: auto; /* Permite rolagem horizontal em telas pequenas */
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse; /* Remove espaçamento entre as células */
+    margin-top: 15px;
+    color: white;
+}
+
+table th, table td {
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Borda suave */
+    text-align: left;
+    white-space: nowrap; /* Evita que o texto quebre em várias linhas */
+}
+
+table th {
+    background-color: #1d3565; /* Fundo mais escuro para cabeçalhos */
+    font-weight: bold;
+    font-size: 0.9em;
+    text-transform: uppercase;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.05); /* Fundo listrado para melhor legibilidade */
+}
+
+table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.15); /* Efeito hover na linha */
+}
+
+/* Mensagem quando não há dados */
+.no-data-message {
+    color: rgba(255, 255, 255, 0.7);
+    font-style: italic;
+    margin-top: 20px;
+    font-size: 1.1em;
+}
+
+/* Botões */
+.btn {
+    background: linear-gradient(to right, #8b5689, #135390);
+    font-family: "Poppins", sans-serif;
+    width: 100%;
+    border: none;
+    padding: 12px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 10px;
+    margin-top: 15px;
+    box-sizing: border-box;
+    transition: background 0.3s ease;
+}
+
+.btn:hover {
+    background: linear-gradient(to right, #be5640, #1f7e5a);
+}
+
+a.btn {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    text-decoration: none; /* Remove sublinhado de links */
+}
+
+/* Estilos para as mensagens flash */
+.flash-messages {
+    margin: 20px 0;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    background-color: rgba(0, 255, 0, 0.2);
+    color: #00ff00;
+    border: 1px solid rgba(0, 255, 0, 0.5);
+    font-size: 1.1em;
+    width: 90%; /* Ajusta a largura para telas menores */
+    max-width: 600px;
+    box-sizing: border-box;
+}
+
+.flash-messages ul {
+    list-style: none; /* Remove bullets */
+    padding: 0;
+    margin: 0;
+}
+
+.flash-messages li {
+    margin: 5px 0;
+    color: inherit;
+}
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .page {
+        padding: 15px;
+    }
+    table thead {
+        display: none; /* Esconde o cabeçalho da tabela em telas menores */
+    }
+    table, table tbody, table tr, table td {
+        display: block; /* Faz cada célula se comportar como um bloco */
+        width: 100%;
+    }
+    table tr {
+        margin-bottom: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    table td {
+        text-align: right;
+        padding-left: 50%; /* Espaço para o pseudo-elemento */
+        position: relative;
+        border: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    table td:last-child {
+        border-bottom: 0;
+    }
+    table td::before {
+        content: attr(data-label); /* Usa o atributo data-label para o nome da coluna */
+        position: absolute;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 0.6);
+    }
+}
+
+@media (min-width: 769px) {
+    /* Ajustes para telas maiores */
+    .page {
+        width: 80%; /* Mais largo em telas maiores */
+        max-width: 1200px; /* Permite tabelas maiores */
+    }
+}
+
+/* Estilos para o Menu de Filtro de Status */
+.status-filter-menu {
+    width: 100%;
+    margin-bottom: 25px; /* Espaço abaixo do menu */
+    background-color: rgba(0, 0, 0, 0.3); /* Fundo sutil para o menu */
+    padding: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.status-filter-menu ul {
+    list-style: none; /* Remove marcadores de lista */
+    padding: 0;
+    margin: 0;
+    display: flex; /* Alinha os itens lado a lado */
+    flex-wrap: wrap; /* Permite que os itens quebrem para a próxima linha em telas pequenas */
+    justify-content: center; /* Centraliza os itens */
+    gap: 10px; /* Espaçamento entre os botões */
+}
+
+.status-filter-menu li {
+    flex-grow: 1; /* Permite que os itens cresçam para preencher o espaço disponível */
+    max-width: 200px; /* Limita o tamanho máximo de cada botão */
+}
+
+.status-filter-menu a {
+    display: block; /* Faz o link preencher todo o item da lista */
+    padding: 10px 15px;
+    text-decoration: none;
+    color: white;
+    background: linear-gradient(to right, #135390, #8b5689); /* Gradiente para os botões */
+    border-radius: 5px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    font-weight: bold;
+    font-size: 0.95em;
+    text-align: center;
+}
+
+.status-filter-menu a:hover {
+    background: linear-gradient(to right, #1f7e5a, #be5640); /* Gradiente de hover */
+    transform: translateY(-2px); /* Efeito de elevação sutil */
+}
+
+.status-filter-menu a.active {
+    background: linear-gradient(to right, #be5640, #1f7e5a); /* Estilo para o status ativo */
+    border: 2px solid #fff; /* Borda branca para destacar */
+    cursor: default; /* Remove o cursor de link */
+    transform: none; /* Remove o efeito de elevação no ativo */
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.4); /* Sombra para o ativo */
+}
+
+/* Media Queries para Responsividade do Menu */
+@media (max-width: 600px) {
+    .status-filter-menu ul {
+        flex-direction: column; /* Empilha os botões verticalmente em telas menores */
+        align-items: center; /* Centraliza os botões empilhados */
+    }
+    .status-filter-menu li {
+        width: 90%; /* Largura maior para os botões empilhados */
+        max-width: 300px; /* Limite de largura para botões em telas pequenas */
+    }
+}

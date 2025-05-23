@@ -283,6 +283,99 @@ app.post('/enviaMsg', isAuthenticated, upload.single('file'), async (req, res) =
     }
 });
 
+Excelente! Seu app.js já está bem estruturado com Express, axios, sessões e Multer. Para integrar o endpoint /listagem/<status>/ do seu Python, que é um POST que recebe banco, usuario e senha, você precisará criar uma nova rota no seu app.js que faça essa requisição.
+
+Vou adicionar uma nova rota ao seu app.js que demonstra como chamar a API Python /listagem/<status>/.
+
+Adicionando a Rota para Listagem no app.js
+Primeiro, identifique onde você quer que essa chamada aconteça no seu fluxo de aplicação. Pelo que vi, você já tem os dados de banco, usuario e senha na sua req.session.pythonResponseData após o login, o que é ótimo! Isso significa que você pode usá-los diretamente na requisição.
+
+Vamos criar uma nova rota GET, por exemplo, /listagem-mensagens/:status, que fará a chamada POST para o seu backend Python e então renderizará uma página ou retornará os dados.
+
+JavaScript
+
+// ... (seu código app.js existente, incluindo imports e middlewares) ...
+
+// Rota para exibir a página de listagem de mensagens (exemplo)
+// Esta rota fará a chamada para o backend Python
+app.get('/listagem-mensagens/:status', isAuthenticated, async (req, res) => {
+    const status = req.params.status; // Captura o status da URL (ex: 0, 1)
+    const userData = req.session.pythonResponseData;
+
+    // Mapeamento do status numérico para texto amigável
+    let statusText = '';
+    switch (status) {
+        case '1':
+            statusText = 'Enviados';
+            break;
+        case '0':
+            statusText = 'Não Enviados';
+            break;
+        case '-1':
+            statusText = 'Com Erro';
+            break;
+        case '2':
+            statusText = 'Cancelados';
+            break;
+        default:
+            statusText = 'Desconhecido';
+            break;
+    }
+
+
+    // Verifique se os dados necessários estão na sessão
+    if (!userData || !userData.banco || !userData.usuario || !userData.senha || !userData.cnpj) {
+        req.flash('info', 'Dados de conexão incompletos na sessão. Por favor, faça login novamente.');
+        return res.redirect('/');
+    }
+
+    const payload = {
+        banco: userData.banco,
+        usuario: userData.usuario,
+        senha: userData.senha,
+        cnpj: userData.cnpj // O seu SQL Python espera 'cnpj'
+    };
+
+    try {
+        // Faça a requisição POST para o endpoint Python
+        const response = await axios.post(`${pythonBackendUrl}/listagem/${status}/`, payload);
+
+        const mensagens = response.data; // Os dados JSON retornados pelo Python
+
+        console.log(`Dados de listagem para status ${status} (${statusText}) recebidos do Python:`, mensagens);
+
+        // Renderize a página 'listagem.ejs'
+        res.render('listagem', {
+            mensagens: mensagens,
+            status: status, // Passa o status numérico para marcar o item ativo no menu
+            statusText: statusText, // Passa o texto do status para exibição
+            idCli: userData.idcli,
+            nome_cliente: userData.nome_cliente,
+            cnpj: userData.cnpj,
+            sessao: userData.token,
+            apikey: userData.apikey,
+            conta: userData.conta,
+            banco: userData.banco,
+            senha: userData.senha,
+            usuario: userData.usuario,
+            messages: req.flash('info') // Importante para as mensagens flash
+        });
+
+    } catch (error) {
+        console.error(`Erro ao buscar listagem para status ${status} da API Python:`, error.message);
+
+        if (error.response) {
+            console.error('Resposta de erro do backend Python:', error.response.data);
+            req.flash('info', `Erro do servidor Python: ${error.response.data.mensagem || error.response.statusText}`);
+        } else if (error.request) {
+            req.flash('info', 'Não foi possível conectar ao servidor Python para a listagem.');
+        } else {
+            req.flash('info', `Ocorreu um erro inesperado ao buscar a listagem: ${error.message}`);
+        }
+        res.redirect('/servicos'); // Redireciona para uma página de erro ou de serviços
+    }
+});
+
 // Inicia o servidor
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
