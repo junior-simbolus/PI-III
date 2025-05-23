@@ -8,7 +8,7 @@ const axios = require('axios'); // Importe o axios
 const multer = require('multer'); // Importe o Multer
 
 const port = 3000;
-const pythonBackendUrl = 'http://192.168.2.190:5000'
+const pythonBackendUrl = 'http://172.31.19.161:5000'
 
 // Configura o EJS como o template engine
 app.set('view engine', 'ejs');
@@ -119,7 +119,10 @@ app.get('/servicos', isAuthenticated, (req, res) => {
         cnpj: userData.cnpj,
         sessao: userData.token,
         apikey: userData.apikey,
-        conta: userData.conta
+        conta: userData.conta,
+        banco: userData.banco,
+        senha: userData.senha,
+        usuario: userData.usuario
     });
 });
 
@@ -131,8 +134,11 @@ app.get('/documentacao', isAuthenticated, (req, res) => {
         cnpj: userData.cnpj,
         sessao: userData.token,
         apikey: userData.apikey,
-        conta: userData.conta
-    });
+        conta: userData.conta,
+        banco: userData.banco,
+        senha: userData.senha,
+        usuario: userData.usuario
+});
 });
 
 app.get('/mensagem', isAuthenticated, (req, res) => {
@@ -150,7 +156,10 @@ app.get('/mensagem', isAuthenticated, (req, res) => {
         cnpj: userData.cnpj,
         sessao: userData.token,        // Corrigido para userData
         apikey: userData.apikey,
-        conta: userData.conta
+        conta: userData.conta,
+        banco: userData.banco,
+        senha: userData.senha,
+        usuario: userData.usuario
     });
 });
 
@@ -184,13 +193,22 @@ app.post('/enviaMsg', isAuthenticated, upload.single('file'), async (req, res) =
     const idCli = userData.idcli;
     const nome_cliente = userData.nome_cliente;
     const cnpj = userData.cnpj;
+    const usuario = userData.usuario;
+    const senha = userData.senha;
+    const banco = userData.banco;
 
     let apiUrl = ''; // URL do endpoint na sua API Python
     let payload = {
         apikey: apikey,
         conta: conta,
         Fone: fone,
-        id: '' // Usando o idCli como identificador do cliente para a mensagem
+        id: '',
+        idCli: idCli,
+        cnpj: cnpj,
+        nome_cliente: nome_cliente,
+        banco: banco,
+        usuario: usuario,
+        senha: senha         // Usando o idCli como identificador do cliente para a mensagem
     };
 
     try {
@@ -231,7 +249,7 @@ app.post('/enviaMsg', isAuthenticated, upload.single('file'), async (req, res) =
             apiUrl = `${pythonBackendUrl}/enviaTexto2`; // Endpoint para envio de texto
             console.log('Enviando texto para Python:', payload);
         }
-
+        console.log(payload)
         const response = await axios.post(apiUrl, payload);
         console.log(response.status)
         console.log(response.data)

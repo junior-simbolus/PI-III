@@ -61,16 +61,27 @@
         <form class="formMensagem" action="/enviaMsg" method="post" enctype="multipart/form-data" id="uploadForm">
             <fieldset>
                 <legend>Solicitação de Serviço</legend>
-                <label for="fone">Telefone:</label>
-                <input type="text" id="fone" name="fone" placeholder="(DD) XXXXXXXXX" maxlength="15" required>
-                <div id="telefoneError" class="error-message"></div>
-                 <label for="file">Arquivo (PDF/JPG):</label>
-                 <input type="file" id="file" name="file" accept=".pdf, .jpg, .jpeg"><div id="arquivoError" class="error-message"></div>
-                <label for="mensagem">Mensagem</label><br>
-                <textarea name="mensagem" id="mensagem" rows="9" cols="37"></textarea><br><br>
-                <button type="submit" class="btn">Enviar</button><br><br>
-                <a href="/servicos" align="center">Voltar para o menu</a>
-            </fieldset>
+                <div class="form-group">
+                    <label for="fone">Telefone (apenas números, com DDD - ex: 14999998888):</label>
+                    <input type="text" id="fone" name="fone" class="form-control" placeholder="Ex: 14999998888"  title="Apenas números, com DDD (10 ou 11 dígitos)">
+                </div>
+                <div class="form-group">
+                    <label for="mensagem">Mensagem (opcional, se enviar arquivo):</label>
+                    <textarea id="mensagem" name="mensagem" class="form-control" rows="5" placeholder="Digite sua mensagem aqui..."></textarea>
+                </div>
+            <div class="form-group">
+                <label for="file">Anexar Arquivo (PDF, JPG, JPEG - máx. 5MB):</label>
+                <input type="file" id="file" name="file" accept=".pdf, .jpg" class="form-control">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
+                <a href="/servicos" class="btn btn-secondary" align="center">Voltar aos Serviços</a>
+            </div>
+        <div class="client-info"> <label>Cliente: <%= idCli %> - <%= nome_cliente %></label></div>
+        </div>
+        </div>
+         </fieldset>
+
         </form>
     </div>
     <script src="/js/accessibility.js"></script>

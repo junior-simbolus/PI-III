@@ -7,26 +7,35 @@ from fdb import Error
 import uuid
 import funcoes
 import os
+import re
+import unicodedata
 
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-app.config["SECRET_KEY"] = ""
+app.config["SECRET_KEY"] = "SIMBOLUS SISTEMA UNIVESP"
 UPLOAD_FOLDER = 'uploads'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 Session(app)
-CORS(app)
+CORS(app, supports_credentials=True)
 url_send = "https://app.whatsgw.com.br/api/WhatsGw/Send"
 user_db = "sysdba"
 password_db = "masterkey"
-name_db = "nome e caminho do banco"
+name_db = "simbolussi.ddns.com.br:c:\\simbolus\\banco\\bSimbolus_Gestor.fdb"
 
 header = {
     "Content-Type": "application/json"
 }
+
+
+def extrair_numeros(texto):
+    texto_normalizado = unicodedata.normalize('NFKD', texto).encode('ascii', 'ignore').decode('utf-8')
+    numeros = re.sub(r'\D', '', texto_normalizado)
+    return numeros
+
 
 @app.route('/')
 def index():
@@ -35,6 +44,7 @@ def index():
 
 @app.route('/enviaTexto/<apikey>/<conta>/<Fone>/<id>/<Texto>', methods=["POST"])
 def enviaTexto(apikey, conta, Fone, ID, Texto):
+    Fone = extrair_numeros(Fone)
     dataTexto = {
         "apikey": apikey,
         "phone_number": conta,
@@ -55,6 +65,7 @@ def enviaTexto2():
     Fone = dados.get('Fone')
     Texto = dados.get('Texto')
     ID = dados.get('id')
+    Fone = extrair_numeros(Fone)
     dataTexto = {
         "apikey": apikey,
         "phone_number": conta,
@@ -65,10 +76,12 @@ def enviaTexto2():
         }
     print (dataTexto)
     response = requests.post(url_send, headers=header, json=dataTexto)
+    inserirRegistro(dataTexto, response, dados, 0)
     return response.json()
 
 @app.route('/enviaArquivo/<apikey>/<conta>/<Fone>/<id>/<Texto>/<nome_arquivo>/<encoded>/<tipo>/<tipo2>', methods=["POST"])
 def enviaArquivo(apikey, conta, Fone, ID, Texto, nome_arquivo, encoded, tipo, tipo2):
+    Fone = extrair_numeros(Fone)
     dataImagem = {
         "apikey": apikey,
         "phone_number": conta,
@@ -97,6 +110,7 @@ def enviaArquivo2():
     encoded = dados.get('encoded')
     nome_arquivo = dados.get('nome_arquivo')
     ID = dados.get('id')
+    Fone = extrair_numeros(Fone)
     dataImagem = {
         "apikey": apikey,
         "phone_number": conta,
@@ -111,7 +125,48 @@ def enviaArquivo2():
         }
     print (dataImagem)
     response = requests.post(url_send, headers=header, json=dataImagem)
+    inserirRegistro(dataImagem, response, dados, 1)
     return response.json()
+
+
+def inserirRegistro(dataImagem, retorno, dados, tipo):
+   nome_cliente = dados.get('nome_cliente')
+   cnpj = dados.get('cnpj')
+   banco = dados.get('banco')
+   senha = dados.get('senha')
+   usuario = dados.get('usuario')
+   texto = dados.get('Texto')
+   if retorno.status_code == 200:
+       enviado = 1
+   else:
+       enviado = 2
+   retorno = retorno.json()
+   nome_arquivo = ""
+   if tipo == 1:
+       nome_arquivo = dados.get('nome_arquivo')
+   if banco and banco != "":
+      sql = "SELECT GEN_ID(GERA_ID_MENSAGEM_WSAPP, 1) FROM RDB$DATABASE"
+      conexao2 = funcoes.create_db_connection(usuario, senha, banco)
+      gen, msg = funcoes.read_query(conexao2, sql)
+      conexao2.close()
+      ID = gen[0][0]
+      sql = "INSERT INTO MENSAGEM_WSAPP (MWA_CODIGO, MWA_INCLUSAO, USU_INCLUSAO, "
+      sql = sql + "MWA_ENVIAR_PARA, MWA_LOCAL, MWA_DOCUMENTO, MWA_ENVIADO, "
+      sql = sql + "MWA_ARQUIVO1, MWA_MENSAGEM, MWA_APIKEY, MWA_INSTANCIA, "
+      sql = sql + "MWA_EMPRESA, MWA_CNPJ, MWA_RETORNO, MWA_ID, MWA_DATA_ENVIO) "
+      sql = sql + "VALUES ("+str(ID)+", CURRENT_TIMESTAMP, "
+      sql = sql + "0, '"+dataImagem['contact_phone_number']+"', 'WEB', 'WEB', "+str(enviado)+", '"+nome_arquivo+"', '"+texto
+      sql = sql + "', '"+dataImagem['apikey']+"', '"+dataImagem['phone_number']+"', '"+nome_cliente+"', '"+cnpj+"', '"
+      sql = sql + retorno.get('result')+"', '"+str(retorno.get('message_id'))+"', CURRENT_TIMESTAMP);"
+      print(sql)
+      conexao2 = funcoes.create_db_connection(usuario, senha, banco)
+      msg = funcoes.exec_query(conexao2, sql)
+      print(msg)
+      conexao2.close()
+
+   retorno = {"mensagem": "success", "code": 200}
+   return jsonify(retorno)
+
 
 @app.route('/documentacao/<tipo>', methods=["POST", "GET"])
 def documentacao(tipo):
@@ -143,7 +198,8 @@ def valida(tipo):
      else:
        cnpj = request.form.get('user')
        senha = request.form.get('pass')
-
+     print(cnpj)
+     print(senha)
      conexao = funcoes.create_db_connection(user_db, password_db, name_db)
      sql = "select cli_senha_web, cli_razao, cli_codigo, cli_banco_caminho, cli_banco_senha, cli_banco_usuario, "
      sql = sql + "cli_apikey, cli_conta from clientes where cli_status = 0 and cli_cnpj = '"+cnpj+"'"
@@ -173,11 +229,18 @@ def valida(tipo):
               conexao2.close()
               apikey = instancia[0][0]
               conta = instancia[0][1]
-
+           print(banco)
            session["cnpj"] = cnpj
            session["idcli"] = cursor[0][2]
            session["nome_cliente"] = cursor[0][1]
            session["uid"] = uuid.uuid4()
+           session["apikey"] = apikey
+           session["conta"] = conta
+           session["logged_in"] = True
+           session["banco"] = banco
+           session["usuario"] = usuario
+           session["senha"] = senha
+
            retorno = {"mensagem": "ok",
                       "idcli": cursor[0][2],
                       "nome_cliente": cursor[0][1],
@@ -185,7 +248,10 @@ def valida(tipo):
                       "code": 200,
                       "token": session.get("uid"),
                       "apikey": apikey,
-                      "conta": conta
+                      "conta": conta,
+                      "banco": banco,
+                      "usuario": usuario,
+                      "senha": senha
                       }
            if tipo == '1':
               return render_template("servicos.html", nome_cliente=cursor[0][1], idCli=cursor[0][2], Mensagem=None,
@@ -202,17 +268,16 @@ def valida(tipo):
 
 @app.route("/logoff/<sessao>")
 def logoff(sessao):
-    session["idCli"] = None
-    session["cnpj"] = None
-    session["nome_cliente"] = None
-    session["uid"] = None
-    session["apikey"] = None
-    session["conta"] = None
+    session.clear()
     return redirect("/")
 
 
-@app.route("/mensagem/<idCli>/<nome_cliente>/<cnpj>")
-def mensagem(idCli, nome_cliente, cnpj):
+@app.route("/mensagem/")
+def mensagem():
+   idCli = session.get("idCli")
+   nome_cliente = session.get("nome_cliente")
+   cnpj = session.get("cnpj")
+
    return render_template("mensagem.html", idCli=idCli, nome_cliente=nome_cliente, cnpj=cnpj)
 
 
@@ -321,5 +386,6 @@ def enviaMsg(tipo, idCli, nome_cliente, cnpj):
      return render_template("mensagem.html", idCli=idCli, nome_cliente=nome_cliente, retorno=retorno, cnpj=cnpj)
 
 
+#app.run(host='172.31.19.161')
 app.run(host='192.168.2.190')
 #  serve(app, host="192.168.2.190", port=5000)
