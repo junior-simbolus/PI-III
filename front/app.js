@@ -283,18 +283,6 @@ app.post('/enviaMsg', isAuthenticated, upload.single('file'), async (req, res) =
     }
 });
 
-Excelente! Seu app.js já está bem estruturado com Express, axios, sessões e Multer. Para integrar o endpoint /listagem/<status>/ do seu Python, que é um POST que recebe banco, usuario e senha, você precisará criar uma nova rota no seu app.js que faça essa requisição.
-
-Vou adicionar uma nova rota ao seu app.js que demonstra como chamar a API Python /listagem/<status>/.
-
-Adicionando a Rota para Listagem no app.js
-Primeiro, identifique onde você quer que essa chamada aconteça no seu fluxo de aplicação. Pelo que vi, você já tem os dados de banco, usuario e senha na sua req.session.pythonResponseData após o login, o que é ótimo! Isso significa que você pode usá-los diretamente na requisição.
-
-Vamos criar uma nova rota GET, por exemplo, /listagem-mensagens/:status, que fará a chamada POST para o seu backend Python e então renderizará uma página ou retornará os dados.
-
-JavaScript
-
-// ... (seu código app.js existente, incluindo imports e middlewares) ...
 
 // Rota para exibir a página de listagem de mensagens (exemplo)
 // Esta rota fará a chamada para o backend Python
@@ -343,6 +331,7 @@ app.get('/listagem-mensagens/:status', isAuthenticated, async (req, res) => {
         const mensagens = response.data; // Os dados JSON retornados pelo Python
 
         console.log(`Dados de listagem para status ${status} (${statusText}) recebidos do Python:`, mensagens);
+        console.log(`DEBUG ANTES DE RENDER: Valor de 'mensagens' enviado para o EJS:`, mensagens); // <--- ADICIONE ESTA LINHA
 
         // Renderize a página 'listagem.ejs'
         res.render('listagem', {

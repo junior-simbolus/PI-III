@@ -35,10 +35,12 @@ def read_query(connection, query):
     result = None
     try:
         cursor.execute(query)
+        columns = [description[0] for description in cursor.description]
+
         result = cursor.fetchall()
     except Error as err:
-        return result, err
-    return result, "ok"
+        return result, err, None
+    return result, "ok", columns
 
 
 def exec_query(connection, query):

@@ -24,7 +24,7 @@ CORS(app, supports_credentials=True)
 url_send = "https://app.whatsgw.com.br/api/WhatsGw/Send"
 user_db = "sysdba"
 password_db = "masterkey"
-name_db = "simbolussi.ddns.com.br:c:\\simbolus\\banco\\bSimbolus_Gestor.fdb"
+name_db = "servidor simbolus firebird:c:\\simbolus\\banco\\bSimbolus_Gestor.fdb"
 
 header = {
     "Content-Type": "application/json"
@@ -61,27 +61,53 @@ def enviaTexto(apikey, conta, Fone, ID, Texto):
 def listagem(status):
     dados = request.get_json()
     banco = dados.get('banco')
-    usuario = dados.ge('usuario')
+    usuario = dados.get('usuario')
     senha = dados.get('senha')
     cnpj = dados.get('cnpj')
-
+    print(status)
+    print(cnpj)
     sql = "SELECT MWA_CODIGO, MWA_INCLUSAO, MWA_ENVIAR_PARA, MWA_LOCAL, MWA_DATA_ENVIO, "
-    sql = sql + "MWA_ARQUIVO1, MWA_ID FROM MENSAGEM_WAPP WHERE MWA_CNPJ = '"+cnpj+"' "
+    sql = sql + "MWA_ARQUIVO1, MWA_ID FROM MENSAGEM_WSAPP WHERE MWA_CNPJ = '"+cnpj+"' "
     sql = sql + "AND MWA_ENVIADO = "+str(status)+" ORDER BY MWA_INCLUSAO"
     conexao = funcoes.create_db_connection(usuario, senha, banco)
     query, msg = funcoes.read_query(conexao, sql)
     conexao.close()
+    qtde = len(query)
+    codigo = [0] * qtde
+    inclusao = [0] * qtde
+    para = [0] * qtde
+    local = [0] * qtde
+    envio = [0] * qtde
+    arquivo = [0] * qtde
+    id = [0] * qtde
+    lista = {"mensagens": []}
 
-    columns = [description[0] for description in query.description]
-    data = []
-    for row in query.fetchall():
-        row_dict = {}
-        for i, column in enumerate(columns):
-            row_dict[column] = row[i]
-        data.append(row_dict)
+    i = 0
+    for row in query:
+        codigo[i] = row[0]
+        inclusao[i] = row[1]
+        para[i] = row[2]
+        local[i] = row[3]
+        envio[i] = row[4]
+        arquivo[i] = row[5]
+        id[i] = row[6]
+        i = i + 1
 
-    json_output = json.dumps(data, indent=4, ensure_ascii=False)
-    return json_output
+    for i in range(qtde):
+        lista["mensagens"].append(
+            {
+                "codigo": codigo[i],
+                "inclusao": inclusao[i],
+                "para": para[i],
+                "local": local[i],
+                "envio": envio[i],
+                "arquivo": arquivo[i],
+                "id": id[i]
+            }
+        )
+
+#    json_output = json.dumps(data, indent=4, ensure_ascii=False)
+    return lista
 
 @app.route('/enviaTexto2/', methods=["POST"])
 def enviaTexto2():
@@ -412,6 +438,6 @@ def enviaMsg(tipo, idCli, nome_cliente, cnpj):
      return render_template("mensagem.html", idCli=idCli, nome_cliente=nome_cliente, retorno=retorno, cnpj=cnpj)
 
 
-app.run(host='172.31.19.161')
-#app.run(host='192.168.2.190')
+#app.run(host='172.31.19.161')
+app.run(host='192.168.2.190')
 #  serve(app, host="192.168.2.190", port=5000)
