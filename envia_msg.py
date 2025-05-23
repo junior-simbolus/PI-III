@@ -24,7 +24,7 @@ CORS(app, supports_credentials=True)
 url_send = "https://app.whatsgw.com.br/api/WhatsGw/Send"
 user_db = "sysdba"
 password_db = "masterkey"
-name_db = "caminho do servidor e banco firebird da Simbolus Sistemas"
+name_db = "simbolussi.ddns.com.br:c:\\simbolus\\banco\\bSimbolus_Gestor.fdb"
 
 header = {
     "Content-Type": "application/json"
@@ -57,15 +57,16 @@ def enviaTexto(apikey, conta, Fone, ID, Texto):
     response = requests.post(url_send, headers=header, json=dataTexto)
     return response.status_code, response.json()
 
-@app.route('/listagem/<status/', methods=["POST"])
+@app.route('/listagem/<status>/', methods=["POST"])
 def listagem(status):
     dados = request.get_json()
     banco = dados.get('banco')
     usuario = dados.ge('usuario')
     senha = dados.get('senha')
+    cnpj = dados.get('cnpj')
 
     sql = "SELECT MWA_CODIGO, MWA_INCLUSAO, MWA_ENVIAR_PARA, MWA_LOCAL, MWA_DATA_ENVIO, "
-    sql = sql + "MWA_ARQUIVO1, MWA_ID FROM MENSAGEM_WAPP WHERE MWA_CNPJ = '"+cnpj"' "
+    sql = sql + "MWA_ARQUIVO1, MWA_ID FROM MENSAGEM_WAPP WHERE MWA_CNPJ = '"+cnpj+"' "
     sql = sql + "AND MWA_ENVIADO = "+str(status)+" ORDER BY MWA_INCLUSAO"
     conexao = funcoes.create_db_connection(usuario, senha, banco)
     query, msg = funcoes.read_query(conexao, sql)
@@ -411,6 +412,6 @@ def enviaMsg(tipo, idCli, nome_cliente, cnpj):
      return render_template("mensagem.html", idCli=idCli, nome_cliente=nome_cliente, retorno=retorno, cnpj=cnpj)
 
 
-#app.run(host='172.31.19.161')
-app.run(host='192.168.2.190')
+app.run(host='172.31.19.161')
+#app.run(host='192.168.2.190')
 #  serve(app, host="192.168.2.190", port=5000)
