@@ -1,12 +1,3 @@
-Com certeza! Vamos criar um arquivo .ejs e um .css para exibir a listagem de mensagens que implementamos no seu app.js.
-
-1. Arquivo EJS para a Listagem (views/listagem.ejs)
-Este arquivo será responsável por renderizar a tabela com os dados das mensagens. Ele esperará a variável mensagens (que virá do seu app.js quando a rota /listagem-mensagens/:status for acessada).
-
-Crie um novo arquivo chamado listagem.ejs dentro da sua pasta views:
-
-Snippet de código
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -68,12 +59,20 @@ Snippet de código
 
     <div class="page">
         <fieldset>
-            <legend>Listagem de Mensagens - Status: <%= status %></legend>
+            <legend>Listagem de Mensagens - Status: <%= statusText %></legend>
 
             <div class="client-info">
                 <label>Cliente: <%= idCli %> - <%= nome_cliente %></label>
             </div>
 
+            <nav class="status-filter-menu">
+                <ul>
+                    <li><a href="/listagem-mensagens/1" class="<%= status == 1 ? 'active' : '' %>">Enviados</a></li>
+                    <li><a href="/listagem-mensagens/0" class="<%= status == 0 ? 'active' : '' %>">Não Enviados</a></li>
+                    <li><a href="/listagem-mensagens/-1" class="<%= status == -1 ? 'active' : '' %>">Com Erro</a></li>
+                    <li><a href="/listagem-mensagens/2" class="<%= status == 2 ? 'active' : '' %>">Cancelados</a></li>
+                </ul>
+            </nav>
             <% if (mensagens && mensagens.length > 0) { %>
                 <div class="table-container">
                     <table>
@@ -104,7 +103,7 @@ Snippet de código
                     </table>
                 </div>
             <% } else { %>
-                <p class="no-data-message">Nenhuma mensagem encontrada para o status **<%= status %>**.</p>
+                <p class="no-data-message">Nenhuma mensagem encontrada para o status **<%= statusText %>**.</p>
             <% } %>
 
             <div class="form-group">
