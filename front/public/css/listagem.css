@@ -104,17 +104,12 @@ fieldset {
 }
 
 table {
-    width: 100%;
-    border-collapse: collapse; /* Remove espaçamento entre as células */
-    margin-top: 15px;
-    color: white;
+    font-size: 10px;
+    line-height: 1.1;
 }
 
 table th, table td {
-    padding: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Borda suave */
-    text-align: left;
-    white-space: nowrap; /* Evita que o texto quebre em várias linhas */
+    padding: 3px 5px;
 }
 
 table th {

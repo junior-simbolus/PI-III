@@ -45,8 +45,6 @@
         <button id="increaseFontSize">+</button>
     </div>
 
-    <img src="/images/Logo.png" alt="Logo da Simbolus"/><br>
-
     <% if (messages && messages.length > 0) { %>
         <div class="flash-messages">
             <ul align="center">
@@ -65,15 +63,15 @@
                 <label>Cliente: <%= idCli %> - <%= nome_cliente %></label>
             </div>
 
-            <nav class="status-filter-menu">
+           <nav class="status-filter-menu">
                 <ul>
-                    <li><a href="/listagem-mensagens/1" class="<%= status == 1 ? 'active' : '' %>">Enviados</a></li>
                     <li><a href="/listagem-mensagens/0" class="<%= status == 0 ? 'active' : '' %>">Não Enviados</a></li>
+                    <li><a href="/listagem-mensagens/1" class="<%= status == 1 ? 'active' : '' %>">Enviados</a></li>
                     <li><a href="/listagem-mensagens/-1" class="<%= status == -1 ? 'active' : '' %>">Com Erro</a></li>
                     <li><a href="/listagem-mensagens/2" class="<%= status == 2 ? 'active' : '' %>">Cancelados</a></li>
                 </ul>
             </nav>
-            <% if (mensagens && mensagens.length > 0) { %>
+            <% if (mensagens.mensagens.length > 0) { %>
                 <div class="table-container">
                     <table>
                         <thead>
@@ -88,7 +86,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% mensagens.forEach(function(msg) { %>
+                            <% mensagens.mensagens.forEach(function(msg) { %>
                                 <tr>
                                     <td><%= msg.codigo %></td>
                                     <td><%= msg.inclusao %></td>
