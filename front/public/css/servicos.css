@@ -100,31 +100,3 @@ a:hover {
     line-height: 1.5; /* Espaçamento entre linhas */
 }
 
-.client-info {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 1.1em;
-    font-weight: bold;
-    color: white;             /* Garante que o texto seja BRANCO */
-    background-color: #333;   /* Garante que o fundo da caixa seja CINZA ESCURO */
-    padding: 10px 15px;       /* Espaçamento interno para o texto dentro da caixa */
-    border-radius: 5px;
-    display: block;           /* Para que ocupa sua própria linha */
-    width: fit-content;       /* Largura se ajusta ao conteúdo */
-    margin-left: auto;        /* Centraliza a caixa */
-    margin-right: auto;       /* Centraliza a caixa */
-    min-width: 250px;         /* Largura mínima da caixa */
-    max-width: 90%;           /* Largura máxima da caixa para responsividade */
-    box-sizing: border-box;   /* Inclui padding/border na largura/altura total */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Sombra sutil */
-}
-
-.client-info label {
-    color: inherit;               /* Herda a cor BRANCA da div .client-info */
-    background-color: transparent; /* Garante que a label não tenha um fundo próprio */
-    display: block;               /* Faz a label ocupar todo o espaço dentro da div */
-    width: 100%;                  /* Preenche a largura da div pai */
-    text-align: center;           /* Centraliza o texto dentro da label */
-    padding: 0;                   /* Remove paddings padrão */
-    margin: 0;                    /* Remove margins padrão */
-}
